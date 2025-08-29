@@ -1,7 +1,10 @@
 package com.sicredi.desafio.domain;
 
+import com.sicredi.desafio.service.enumerations.VoteChoice;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
@@ -12,7 +15,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -20,6 +27,9 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+@Builder(toBuilder = true)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Table(
         name = "vote",
         indexes = {
@@ -43,8 +53,9 @@ public class Vote extends EntityBase {
     @Column(name = "associate_id", nullable = false, length = 11)
     private String associateId;
 
-    @Column(nullable = false)
-    private Boolean choice;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 10)
+    private VoteChoice choice;
 
     @Column(name = "voted_at", nullable = false)
     private LocalDateTime votedAt;
