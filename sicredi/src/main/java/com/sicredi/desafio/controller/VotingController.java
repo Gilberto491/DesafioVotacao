@@ -1,5 +1,7 @@
 package com.sicredi.desafio.controller;
 
+import com.sicredi.desafio.assembler.VoteCountModelAssembler;
+import com.sicredi.desafio.assembler.VoteModelAssembler;
 import com.sicredi.desafio.dto.request.VoteCreateRequest;
 import com.sicredi.desafio.dto.response.OpenSessionCheckResponse;
 import com.sicredi.desafio.dto.response.SessionOpenNowResponse;
@@ -14,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +37,8 @@ import java.time.ZoneOffset;
 public class VotingController {
 
     private final VotingService service;
+    private final VoteModelAssembler assembler;
+    private final VoteCountModelAssembler countModelAssembler;
 
     @Operation(summary = "Checks if a session can be opened for a topic")
     @ApiResponse(responseCode = "200", description = "OK")
@@ -59,19 +64,21 @@ public class VotingController {
     @ApiResponse(responseCode = "201", description = "Created")
     @StandardErrors
     @PostMapping("/sessions/{sessionId}/votes")
-    public ResponseEntity<VoteResponse> vote(
+    public ResponseEntity<EntityModel<VoteResponse>> vote(
             @PathVariable Long sessionId,
             @Valid @RequestBody VoteCreateRequest req) {
         log.info("POST /sessions/{}/votes start choice={}", sessionId, req.choice());
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.vote(sessionId, req));
+        EntityModel<VoteResponse> model = assembler.toModel(service.vote(sessionId, req));
+        return ResponseEntity.status(HttpStatus.CREATED).body(model);
     }
 
     @Operation(summary = "Get vote tally for a session")
     @ApiResponse(responseCode = "200", description = "OK")
     @ReadErrors
     @GetMapping("/sessions/{sessionId}/votes/count")
-    public ResponseEntity<VoteCountResponse> count(@PathVariable Long sessionId) {
+    public ResponseEntity<EntityModel<VoteCountResponse>> count(@PathVariable Long sessionId) {
         log.info("GET /sessions/{}/votes/count start", sessionId);
-        return ResponseEntity.status(HttpStatus.OK).body(service.count(sessionId));
+        EntityModel<VoteCountResponse> model = countModelAssembler.toModel(service.count(sessionId));
+        return ResponseEntity.ok(model);
     }
 }

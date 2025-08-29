@@ -8,10 +8,9 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface TopicMapper {
-    @Mapping(target = "active", expression = "java(t.getStatus() == TopicStatus.OPEN)")
     TopicResponse toResponse(Topic t);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "status", constant = "OPEN")
+    @Mapping(target = "status", constant = "PENDING")
     Topic toEntity(TopicCreateRequest req);
 }
