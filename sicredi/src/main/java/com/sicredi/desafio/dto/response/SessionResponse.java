@@ -7,4 +7,5 @@ public record SessionResponse(
         Long topicId,
         Instant opensAt,
         Instant closesAt
-) {}
+) {
+}

@@ -8,4 +8,5 @@ public record VoteCountResponse(
         long yes,
         long no,
         VoteResult result
-) {}
+) {
+}

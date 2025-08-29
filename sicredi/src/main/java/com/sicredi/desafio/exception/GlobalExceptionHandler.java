@@ -47,7 +47,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UnprocessableEntityException.class)
     public ResponseEntity<ApiError> on422(UnprocessableEntityException ex, HttpServletRequest req) {
-        var body = ApiError.of(HttpStatus.UNPROCESSABLE_ENTITY, "Unprocessable Entity", req.getRequestURI());
+        var body = ApiError.of(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage(), req.getRequestURI());
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(body);
     }
 

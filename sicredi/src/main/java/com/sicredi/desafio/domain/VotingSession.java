@@ -29,11 +29,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Table(
-    name = "voting_session",
-    indexes = {
-            @Index(name = "idx_votingsession_topic", columnList = "topic_id"),
-            @Index(name = "idx_votingsession_topic_status", columnList = "topic_id, status")
-    }
+        name = "voting_session",
+        indexes = {
+                @Index(name = "idx_votingsession_topic", columnList = "topic_id"),
+                @Index(name = "idx_votingsession_topic_status", columnList = "topic_id, status")
+        }
 )
 public class VotingSession extends EntityBase {
 
@@ -58,4 +58,9 @@ public class VotingSession extends EntityBase {
     @Column(length = 20, nullable = false)
     private VotingSessionStatus status;
 
+    public boolean isOpenAt(LocalDateTime at) {
+        return status == VotingSessionStatus.OPEN
+                && !at.isBefore(opensAt)
+                && !at.isAfter(closesAt);
+    }
 }

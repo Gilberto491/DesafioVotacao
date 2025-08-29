@@ -31,7 +31,7 @@ public class VotingSessionController {
     @PostMapping("/topics/{topicId}/sessions")
     public ResponseEntity<SessionResponse> openSession(
             @PathVariable Long topicId,
-            @Valid @RequestBody(required = false) SessionCreateRequest req) {
+            @RequestBody(required = false) SessionCreateRequest req) {
         var resp = service.openSession(topicId, req);
         return ResponseEntity.status(HttpStatus.CREATED).body(resp);
     }

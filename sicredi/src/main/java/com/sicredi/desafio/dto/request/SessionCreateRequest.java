@@ -4,4 +4,5 @@ import jakarta.validation.constraints.Min;
 
 public record SessionCreateRequest(
         @Min(1) Integer durationMinutes
-) {}
+) {
+}
