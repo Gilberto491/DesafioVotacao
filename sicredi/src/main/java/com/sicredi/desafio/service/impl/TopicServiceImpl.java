@@ -4,6 +4,7 @@ import com.sicredi.desafio.domain.Topic;
 import com.sicredi.desafio.domain.enumerations.TopicStatus;
 import com.sicredi.desafio.dto.request.TopicCreateRequest;
 import com.sicredi.desafio.dto.response.TopicResponse;
+import com.sicredi.desafio.exception.ConflictException;
 import com.sicredi.desafio.repository.TopicRepository;
 import com.sicredi.desafio.service.TopicService;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,7 @@ public class TopicServiceImpl implements TopicService {
     @Transactional
     public TopicResponse create(TopicCreateRequest req) {
         if (topicRepo.existsByTitleIgnoreCase(req.title())) {
-            throw new IllegalStateException("Topic title already exists");
+            throw new ConflictException("Topic title already exists");
         }
 
         Topic t = Topic.builder()
