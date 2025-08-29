@@ -1,7 +1,13 @@
 package com.sicredi.desafio.exception;
 
+import lombok.Getter;
+
+@Getter
 public class NotFoundException extends RuntimeException {
-    public NotFoundException(String msg) {
-        super(msg);
+    private final String messageKey;
+
+    public NotFoundException(String messageKey) {
+        super(messageKey);
+        this.messageKey = messageKey;
     }
 }

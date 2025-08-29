@@ -1,7 +1,14 @@
 package com.sicredi.desafio.exception;
 
+import lombok.Getter;
+
+@Getter
 public class UnprocessableEntityException extends RuntimeException {
-    public UnprocessableEntityException(String message) {
-        super(message);
+    private final String messageKey;
+
+    public UnprocessableEntityException(String messageKey) {
+        super(messageKey);
+        this.messageKey = messageKey;
     }
 }
+

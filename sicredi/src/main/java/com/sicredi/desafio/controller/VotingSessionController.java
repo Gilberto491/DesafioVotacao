@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @Tag(name = "VoteSession")
 @RestController
 @RequestMapping("/api/v1")
@@ -32,6 +34,8 @@ public class VotingSessionController {
     public ResponseEntity<SessionResponse> openSession(
             @PathVariable Long topicId,
             @RequestBody(required = false) SessionCreateRequest req) {
+        log.info("POST /topics/{}/sessions start duration={}min",
+                topicId, req != null ? req.durationMinutes() : "default");
         var resp = service.openSession(topicId, req);
         return ResponseEntity.status(HttpStatus.CREATED).body(resp);
     }

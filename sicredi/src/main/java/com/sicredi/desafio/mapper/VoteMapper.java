@@ -14,7 +14,7 @@ public interface VoteMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "topic", source = "session.topic")
-    @Mapping(target = "associateId", source = "req.associateId")
+    @Mapping(target = "associateId", source = "req.cpf")
     @Mapping(target = "choice", source = "req.choice")
     @Mapping(target = "votedAt", source = "votedAt")
     Vote toEntity(VoteCreateRequest req, VotingSession session, LocalDateTime votedAt);

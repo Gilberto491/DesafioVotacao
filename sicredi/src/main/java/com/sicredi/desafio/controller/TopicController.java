@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @Tag(name = "Topics")
 @RestController
 @RequestMapping("/api/v1/topics")
@@ -35,6 +37,7 @@ public class TopicController {
     @ApiResponse(responseCode = "201", description = "Created")
     @PostMapping
     public ResponseEntity<TopicResponse> create(@Valid @RequestBody TopicCreateRequest req) {
+        log.info("POST /topics start title={}", req.title());
         TopicResponse resp = topicService.create(req);
         return ResponseEntity.status(HttpStatus.CREATED).body(resp);
     }
@@ -44,6 +47,8 @@ public class TopicController {
     @ApiResponse(responseCode = "200", description = "OK")
     @GetMapping
     public ResponseEntity<Page<TopicResponse>> list(Pageable pageable) {
+        log.info("GET /topics start page={} size={} sort={}",
+                pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
         return ResponseEntity.status(HttpStatus.OK).body(topicService.list(pageable));
     }
 
@@ -52,6 +57,7 @@ public class TopicController {
     @ApiResponse(responseCode = "200", description = "OK")
     @GetMapping("/{id}")
     public ResponseEntity<TopicResponse> getById(@PathVariable Long id) {
+        log.info("GET /topics/{} start", id);
         return ResponseEntity.ok().body(topicService.getById(id));
     }
 
@@ -60,6 +66,7 @@ public class TopicController {
     @ApiResponse(responseCode = "204", description = "No Content")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
+        log.info("DELETE /topics/{} start", id);
         topicService.delete(id);
         return ResponseEntity.noContent().build();
     }

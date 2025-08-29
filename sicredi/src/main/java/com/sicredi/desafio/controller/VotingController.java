@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+@Slf4j
 @Tag(name = "Vote")
 @RestController
 @RequestMapping("/api/v1")
@@ -38,6 +40,7 @@ public class VotingController {
     @ReadErrors
     @PostMapping("/topics/{topicId}/sessions:check-open")
     public ResponseEntity<OpenSessionCheckResponse> checkIfCanOpen(@PathVariable Long topicId) {
+        log.info("POST /topics/{}/sessions:check-open start", topicId);
         boolean can = service.canOpenSession(topicId, LocalDateTime.now(ZoneOffset.UTC));
         return ResponseEntity.ok(new OpenSessionCheckResponse(can));
     }
@@ -47,6 +50,7 @@ public class VotingController {
     @ReadErrors
     @GetMapping("/sessions/{sessionId}/open-now")
     public ResponseEntity<SessionOpenNowResponse> isSessionOpenNow(@PathVariable Long sessionId) {
+        log.info("GET /sessions/{}/open-now start", sessionId);
         boolean open = service.isSessionOpenNow(sessionId, LocalDateTime.now(ZoneOffset.UTC));
         return ResponseEntity.ok(new SessionOpenNowResponse(open));
     }
@@ -58,6 +62,7 @@ public class VotingController {
     public ResponseEntity<VoteResponse> vote(
             @PathVariable Long sessionId,
             @Valid @RequestBody VoteCreateRequest req) {
+        log.info("POST /sessions/{}/votes start choice={}", sessionId, req.choice());
         return ResponseEntity.status(HttpStatus.CREATED).body(service.vote(sessionId, req));
     }
 
@@ -66,6 +71,7 @@ public class VotingController {
     @ReadErrors
     @GetMapping("/sessions/{sessionId}/votes/count")
     public ResponseEntity<VoteCountResponse> count(@PathVariable Long sessionId) {
+        log.info("GET /sessions/{}/votes/count start", sessionId);
         return ResponseEntity.status(HttpStatus.OK).body(service.count(sessionId));
     }
 }

@@ -12,11 +12,13 @@ import com.sicredi.desafio.repository.TopicRepository;
 import com.sicredi.desafio.repository.VotingSessionRepository;
 import com.sicredi.desafio.service.VotingSessionService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -31,8 +33,9 @@ public class VotingSessionServiceImpl implements VotingSessionService {
     @Override
     @Transactional
     public SessionResponse openSession(Long topicId, SessionCreateRequest req) {
+        log.info("Opening session topicId={}", topicId);
         if (existsOpenSession(topicId, timeProvider.nowUtc())) {
-            throw new ConflictException("There is already an open session for this topic");
+            throw new ConflictException("session.already-open-session");
         }
         return mapper.toResponse
                 (sessionRepo.save
@@ -44,7 +47,7 @@ public class VotingSessionServiceImpl implements VotingSessionService {
 
     private Topic getTopicOr404(Long topicId) {
         return topicRepo.findById(topicId)
-                .orElseThrow(() -> new NotFoundException("Topic not found"));
+                .orElseThrow(() -> new NotFoundException("topic.not-found"));
     }
 
     private int resolveDuration(SessionCreateRequest req) {
