@@ -3,29 +3,25 @@ package com.sicredi.desafio.controller;
 import com.sicredi.desafio.assembler.SessionModelAssembler;
 import com.sicredi.desafio.dto.request.SessionCreateRequest;
 import com.sicredi.desafio.dto.response.SessionResponse;
-import com.sicredi.desafio.dto.response.TopicResponse;
 import com.sicredi.desafio.exception.StandardErrors;
 import com.sicredi.desafio.service.VotingSessionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.net.URI;
-
-import static org.springframework.hateoas.IanaLinkRelations.SELF;
-
 @Slf4j
+@Validated
 @Tag(name = "VoteSession")
 @RestController
 @RequestMapping("/api/v1")
