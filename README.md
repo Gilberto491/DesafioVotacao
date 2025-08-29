@@ -115,3 +115,7 @@ A tela do tipo SELECAO exibe uma lista de opções para que o usuário.
 O aplicativo envia uma requisição POST para a url informada e com o body definido pelo objeto dentro de cada item da lista de seleção, quando o mesmo é acionado, semelhando ao funcionamento dos botões da tela FORMULARIO.
 
 # desafio-votacao
+
+⚙️ Modelagem de Dados
+
+<img width="565" height="948" alt="DER" src="https://github.com/user-attachments/assets/0c9813ac-b19f-4cd9-b186-74844af1e6bb" />
