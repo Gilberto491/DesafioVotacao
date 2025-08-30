@@ -32,6 +32,7 @@
 		<openai.version>2.6.0</openai.version>
 		<lombok.version>1.18.34</lombok.version>
 		<mapper.version>1.5.5.Final</mapper.version>
+		<teste.version>1.20.1</teste.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -60,6 +61,23 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<version>${teste.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>${teste.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.flywaydb</groupId>

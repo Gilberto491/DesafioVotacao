@@ -3,7 +3,9 @@ package com.sicredi.desafio.domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -12,6 +14,8 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @MappedSuperclass
+@SuperBuilder(toBuilder = true)
+@NoArgsConstructor
 @Getter
 @Setter
 public class EntityBase implements Serializable {

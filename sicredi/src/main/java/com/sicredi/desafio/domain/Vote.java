@@ -13,21 +13,23 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
-@Builder(toBuilder = true)
+@SuperBuilder(toBuilder = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Table(
@@ -59,5 +61,10 @@ public class Vote extends EntityBase {
 
     @Column(name = "voted_at", nullable = false)
     private LocalDateTime votedAt;
+
+    @PrePersist
+    void prePersistVote() {
+        if (votedAt == null) votedAt = LocalDateTime.from(LocalDateTime.now());
+    }
 
 }
