@@ -14,6 +14,8 @@ import org.springframework.test.context.ActiveProfiles;
 import java.time.Instant;
 import java.time.LocalDateTime;
 
+import static com.sicredi.desafio.helpers.TestConstants.DESCRIPTION_TOPIC;
+import static com.sicredi.desafio.helpers.TestConstants.NAME_TOPIC;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @DataJpaTest
@@ -31,7 +33,7 @@ public class VotingSessionRepositoryTest {
     @BeforeEach
     void setUp() {
         topic = topicRepo.save(
-                TestFixtures.topic("Sessão Pauta", "desc")
+                TestFixtures.topic(NAME_TOPIC, DESCRIPTION_TOPIC)
         );
     }
 

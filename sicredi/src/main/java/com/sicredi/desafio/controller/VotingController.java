@@ -30,11 +30,13 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+import static com.sicredi.desafio.constants.ApiConstants.BASE;
+
 @Slf4j
 @Validated
 @Tag(name = "Vote")
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping(BASE)
 @RequiredArgsConstructor
 public class VotingController {
 

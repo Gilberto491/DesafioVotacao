@@ -29,11 +29,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 
+import static com.sicredi.desafio.constants.ApiConstants.BASE;
+
 @Slf4j
 @Validated
 @Tag(name = "Topics")
 @RestController
-@RequestMapping("/api/v1/topics")
+@RequestMapping(BASE + "/topics")
 @RequiredArgsConstructor
 public class TopicController {
 

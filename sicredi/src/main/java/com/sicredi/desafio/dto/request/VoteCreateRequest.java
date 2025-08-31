@@ -8,6 +8,6 @@ public record VoteCreateRequest(
         @NotNull VoteChoice choice,
         @NotNull
         @Pattern(regexp = "\\d{11}", message = "CPF must have 11 digits")
-                String cpf
+        String cpf
 ) {
 }

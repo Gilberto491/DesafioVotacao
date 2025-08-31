@@ -11,6 +11,11 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
+import static com.sicredi.desafio.helpers.TestConstants.CPF;
+import static com.sicredi.desafio.helpers.TestConstants.CPF_2;
+import static com.sicredi.desafio.helpers.TestConstants.CPF_3;
+import static com.sicredi.desafio.helpers.TestConstants.DESCRIPTION_TOPIC;
+import static com.sicredi.desafio.helpers.TestConstants.NAME_TOPIC;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -25,23 +30,23 @@ public class VoteRepositoryTest {
 
     @BeforeEach
     void setup() {
-        topic = topicRepository.save(TestFixtures.topic("Pauta X", "Description Pauta X"));
+        topic = topicRepository.save(TestFixtures.topic(NAME_TOPIC, DESCRIPTION_TOPIC));
     }
 
     @Test
     void existsByTopicAndAssociateId_returnsTrueWhenDuplicate() {
-        voteRepository.save(TestFixtures.vote(topic, "123", VoteChoice.SIM));
+        voteRepository.save(TestFixtures.vote(topic, CPF, VoteChoice.SIM));
 
-        assertThat(voteRepository.existsByTopic_IdAndAssociateId(topic.getId(), "123")).isTrue();
-        assertThat(voteRepository.existsByTopic_IdAndAssociateId(topic.getId(), "999")).isFalse();
+        assertThat(voteRepository.existsByTopic_IdAndAssociateId(topic.getId(), CPF)).isTrue();
+        assertThat(voteRepository.existsByTopic_IdAndAssociateId(topic.getId(), CPF_2)).isFalse();
     }
 
     @Test
     void countByTopicAndChoice_countsCorrectly() {
         voteRepository.saveAll(List.of(
-                TestFixtures.vote(topic, "a1", VoteChoice.SIM),
-                TestFixtures.vote(topic, "a2", VoteChoice.SIM),
-                TestFixtures.vote(topic, "a3", VoteChoice.NAO)
+                TestFixtures.vote(topic, CPF, VoteChoice.SIM),
+                TestFixtures.vote(topic, CPF_2, VoteChoice.SIM),
+                TestFixtures.vote(topic, CPF_3, VoteChoice.NAO)
         ));
 
         assertThat(voteRepository.countByTopic_IdAndChoice(topic.getId(), VoteChoice.SIM)).isEqualTo(2);

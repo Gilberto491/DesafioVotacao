@@ -28,6 +28,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static com.sicredi.desafio.helpers.TestConstants.CPF;
+import static com.sicredi.desafio.helpers.TestConstants.NAME_TOPIC;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.when;
@@ -56,7 +58,7 @@ public class VotingServiceImplTest {
     @BeforeEach
     void init() {
         now = LocalDateTime.of(2025, 1, 1, 12, 0, 0);
-        topic = Topic.builder().id(1L).title("Pauta 1").build();
+        topic = Topic.builder().id(1L).title(NAME_TOPIC).build();
         session = Sessions.openSessionNowWithId(10L, topic, now);
         when(timeProvider.nowUtc()).thenReturn(now);
     }
@@ -66,9 +68,9 @@ public class VotingServiceImplTest {
         when(timeProvider.nowUtc()).thenReturn(now);
 
         when(sessionRepo.findById(10L)).thenReturn(Optional.of(session));
-        when(voteRepo.existsByTopic_IdAndAssociateId(1L, "12345678910")).thenReturn(true);
+        when(voteRepo.existsByTopic_IdAndAssociateId(1L, CPF)).thenReturn(true);
 
-        var req = new VoteCreateRequest(VoteChoice.SIM, "12345678910");
+        var req = new VoteCreateRequest(VoteChoice.SIM, CPF);
 
         assertThatThrownBy(() -> service.vote(10L, req))
                 .isInstanceOf(ConflictException.class)
@@ -80,18 +82,18 @@ public class VotingServiceImplTest {
         var session = Sessions.openSessionNowWithId(10L, topic, now);
 
         when(sessionRepo.findById(10L)).thenReturn(Optional.of(session));
-        when(voteRepo.existsByTopic_IdAndAssociateId(1L, "11122233344")).thenReturn(false);
-        when(voterRegistryClient.checkCpf("11122233344"))
+        when(voteRepo.existsByTopic_IdAndAssociateId(1L, CPF)).thenReturn(false);
+        when(voterRegistryClient.checkCpf(CPF))
                 .thenReturn(new VoterStatusResponse(VoterStatus.ABLE_TO_VOTE));
 
-        var req = new VoteCreateRequest(VoteChoice.SIM, "11122233344");
+        var req = new VoteCreateRequest(VoteChoice.SIM, CPF);
 
         var entity = Vote.builder()
                 .id(99L).topic(topic)
-                .associateId("11122233344").choice(VoteChoice.SIM).votedAt(now)
+                .associateId(CPF).choice(VoteChoice.SIM).votedAt(now)
                 .build();
 
-        var resp = new VoteResponse(99L, 10L, "11122233344", VoteChoice.SIM, now);
+        var resp = new VoteResponse(99L, 10L, CPF, VoteChoice.SIM, now);
 
         when(mapper.toEntity(req, session, now)).thenReturn(entity);
         when(voteRepo.save(entity)).thenReturn(entity);
@@ -103,11 +105,11 @@ public class VotingServiceImplTest {
     @Test
     void vote_unable_whenRegistrySaysUnable() {
         when(sessionRepo.findById(10L)).thenReturn(Optional.of(session));
-        when(voteRepo.existsByTopic_IdAndAssociateId(1L, "99988877766")).thenReturn(false);
-        when(voterRegistryClient.checkCpf("99988877766"))
+        when(voteRepo.existsByTopic_IdAndAssociateId(1L, CPF)).thenReturn(false);
+        when(voterRegistryClient.checkCpf(CPF))
                 .thenReturn(new VoterStatusResponse(VoterStatus.UNABLE_TO_VOTE));
 
-        var req = new VoteCreateRequest(VoteChoice.NAO, "99988877766");
+        var req = new VoteCreateRequest(VoteChoice.NAO, CPF);
 
         assertThatThrownBy(() -> service.vote(10L, req))
                 .isInstanceOf(UnableToVoteException.class);
