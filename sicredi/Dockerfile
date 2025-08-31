@@ -1,8 +1,6 @@
-# ===== BUILD =====
 FROM maven:3.9-eclipse-temurin-17 AS build
 WORKDIR /app
 
-# (opcional) variáveis default usadas no compose, não atrapalham aqui
 ENV SPRING_PROFILES_ACTIVE=prod \
     SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/votacao \
     SPRING_DATASOURCE_USERNAME=postgres \
@@ -12,21 +10,16 @@ COPY pom.xml .
 RUN --mount=type=cache,target=/root/.m2 mvn -q -e -B -DskipTests dependency:go-offline
 COPY src ./src
 
-# gera o jar e copia com nome fixo
 RUN --mount=type=cache,target=/root/.m2 mvn -q -e -B -DskipTests package \
  && cp target/*.jar /app/app.jar
 
-# ===== RUNTIME =====
 FROM eclipse-temurin:17-jre
 
-# (recomendado p/ healthcheck com curl)
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
-# usuário não-root
 RUN useradd -m -u 10001 appuser
 WORKDIR /app
 
-# copia o jar já com nome fixo
 COPY --from=build /app/app.jar /app/app.jar
 
 ENV SERVER_PORT=8080 \

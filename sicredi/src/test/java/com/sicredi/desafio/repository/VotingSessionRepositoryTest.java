@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 import static com.sicredi.desafio.helpers.TestConstants.DESCRIPTION_TOPIC;
@@ -28,10 +27,12 @@ public class VotingSessionRepositoryTest {
     @Autowired
     private TopicRepository topicRepo;
 
+    private LocalDateTime now;
     private Topic topic;
 
     @BeforeEach
     void setUp() {
+        now = LocalDateTime.now();
         topic = topicRepo.save(
                 TestFixtures.topic(NAME_TOPIC, DESCRIPTION_TOPIC)
         );
@@ -39,13 +40,11 @@ public class VotingSessionRepositoryTest {
 
     @Test
     void existsByTopicIdAndStatusAndOpensAtBeforeAndClosesAtAfter_returnsTrueWhenActiveSessionExists() {
-        LocalDateTime localDateTime = LocalDateTime.now();
-        Instant now = ConvertDate.instantNow();
-        var session = Sessions.openSessionAround(topic, now, 5);
+        var session = Sessions.openSessionAround(topic, ConvertDate.instantNow(), 5);
         sessionRepo.save(session);
 
         boolean exists = sessionRepo.existsByTopicIdAndStatusAndOpensAtBeforeAndClosesAtAfter(
-                topic.getId(), VotingSessionStatus.OPEN, localDateTime, localDateTime
+                topic.getId(), VotingSessionStatus.OPEN, now, now
         );
 
         assertThat(exists).isTrue();
@@ -53,12 +52,21 @@ public class VotingSessionRepositoryTest {
 
     @Test
     void existsByTopicIdAndStatusAndOpensAtBeforeAndClosesAtAfter_returnsFalseWhenNoActiveSession() {
-        LocalDateTime now = LocalDateTime.now();
-
         boolean exists = sessionRepo.existsByTopicIdAndStatusAndOpensAtBeforeAndClosesAtAfter(
                 topic.getId(), VotingSessionStatus.OPEN, now, now
         );
 
         assertThat(exists).isFalse();
+    }
+
+    @Test
+    void deleteByTopic_Id_shouldRemoveSessionsByTopic() {
+        var session1 = Sessions.openSessionAround(topic, ConvertDate.instantNow(), 5);
+
+        sessionRepo.save(session1);
+
+        assertThat(sessionRepo.count()).isEqualTo(1);
+        sessionRepo.deleteByTopic_Id(topic.getId());
+        assertThat(sessionRepo.count()).isEqualTo(0);
     }
 }

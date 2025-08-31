@@ -52,4 +52,14 @@ public class VoteRepositoryTest {
         assertThat(voteRepository.countByTopic_IdAndChoice(topic.getId(), VoteChoice.SIM)).isEqualTo(2);
         assertThat(voteRepository.countByTopic_IdAndChoice(topic.getId(), VoteChoice.NAO)).isEqualTo(1);
     }
+
+    @Test
+    void deleteByTopic_Id_shouldRemoveVotesByTopic() {
+        voteRepository.save(TestFixtures.vote(topic, CPF, VoteChoice.SIM));
+        voteRepository.save(TestFixtures.vote(topic, CPF_2, VoteChoice.NAO));
+
+        assertThat(voteRepository.count()).isEqualTo(2);
+        voteRepository.deleteByTopic_Id(topic.getId());
+        assertThat(voteRepository.count()).isEqualTo(0);
+    }
 }

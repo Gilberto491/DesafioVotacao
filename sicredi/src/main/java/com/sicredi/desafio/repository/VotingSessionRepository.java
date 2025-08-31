@@ -13,4 +13,5 @@ public interface VotingSessionRepository extends JpaRepository<VotingSession, Lo
     boolean existsByTopicIdAndStatusAndOpensAtBeforeAndClosesAtAfter(
             Long topicId, VotingSessionStatus status, LocalDateTime now1, LocalDateTime now2);
 
+    void deleteByTopic_Id(Long topicId);
 }

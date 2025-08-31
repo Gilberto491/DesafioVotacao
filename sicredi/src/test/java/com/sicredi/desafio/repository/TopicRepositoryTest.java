@@ -49,4 +49,13 @@ public class TopicRepositoryTest {
         topicRepository.deleteById(topic.getId());
         assertThat(topicRepository.findById(topic.getId())).isEmpty();
     }
+
+    @Test
+    void existsByIdAndStatus_returnsTrue_whenTopicHasStatus() {
+        topic.setStatus(TopicStatus.USED);
+        topicRepository.save(topic);
+
+        boolean exists = topicRepository.existsByIdAndStatus(topic.getId(), TopicStatus.USED);
+        assertThat(exists).isTrue();
+    }
 }

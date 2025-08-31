@@ -8,6 +8,8 @@ import com.sicredi.desafio.exception.ConflictException;
 import com.sicredi.desafio.exception.NotFoundException;
 import com.sicredi.desafio.mapper.TopicMapper;
 import com.sicredi.desafio.repository.TopicRepository;
+import com.sicredi.desafio.repository.VoteRepository;
+import com.sicredi.desafio.repository.VotingSessionRepository;
 import com.sicredi.desafio.service.impl.TopicServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,7 +32,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -43,6 +44,10 @@ public class TopicServiceImplTest {
     private TopicRepository topicRepo;
     @Mock
     private TopicMapper mapper;
+    @Mock
+    VoteRepository voteRepo;
+    @Mock
+    VotingSessionRepository votingSessionRepo;
 
     @InjectMocks
     private TopicServiceImpl service;
@@ -117,10 +122,11 @@ public class TopicServiceImplTest {
     @Test
     void delete_removes_whenExists() {
         when(topicRepo.existsById(1L)).thenReturn(true);
-        doNothing().when(topicRepo).deleteById(1L);
 
         service.delete(1L);
 
+        verify(voteRepo).deleteByTopic_Id(1L);
+        verify(votingSessionRepo).deleteByTopic_Id(1L);
         verify(topicRepo).deleteById(1L);
     }
 
