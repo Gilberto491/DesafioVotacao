@@ -21,6 +21,15 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 
+import static com.sicredi.desafio.helpers.ApiPaths.checkOpen;
+import static com.sicredi.desafio.helpers.ApiPaths.openNow;
+import static com.sicredi.desafio.helpers.ApiPaths.vote;
+import static com.sicredi.desafio.helpers.ApiPaths.voteCount;
+import static com.sicredi.desafio.helpers.ApiPaths.votes;
+import static com.sicredi.desafio.helpers.TestConstants.CPF;
+import static com.sicredi.desafio.helpers.TestConstants.SESSION_ID_10;
+import static com.sicredi.desafio.helpers.TestConstants.TOPIC_ID;
+import static com.sicredi.desafio.helpers.TestConstants.VOTE_ID;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -45,66 +54,60 @@ public class VotingControllerTest {
     @MockBean
     VoteCountModelAssembler countModelAssembler;
 
-    private static final String BASE = "/api/v1";
-
     @Test
     void vote_returns201_withBody() throws Exception {
-        long sessionId = 10L;
-        var req = new VoteCreateRequest(VoteChoice.SIM, "11122233344");
+        var req = new VoteCreateRequest(VoteChoice.SIM, CPF);
 
-        var body = new VoteResponse(99L, sessionId, "11122233344", VoteChoice.SIM,
+        var body = new VoteResponse(99L, SESSION_ID_10, CPF, VoteChoice.SIM,
                 LocalDateTime.of(2025, 1, 1, 12, 0, 0));
-        var model = EntityModel.of(body, Link.of(BASE + "/sessions/" + sessionId + "/votes/99").withSelfRel());
+        var model = EntityModel.of(body, Link.of(vote(SESSION_ID_10, VOTE_ID)).withSelfRel());
 
-        Mockito.when(service.vote(eq(sessionId), any(VoteCreateRequest.class))).thenReturn(body);
+        Mockito.when(service.vote(eq(SESSION_ID_10), any(VoteCreateRequest.class))).thenReturn(body);
         Mockito.when(assembler.toModel(eq(body))).thenReturn(model);
 
-        mvc.perform(post(BASE + "/sessions/{sessionId}/votes", sessionId)
+        mvc.perform(post(votes(SESSION_ID_10))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsString(req)))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentTypeCompatibleWith("application/hal+json"))
                 .andExpect(jsonPath("$.id", is(99)))
                 .andExpect(jsonPath("$.sessionId", is(10)))
-                .andExpect(jsonPath("$.associateId", is("11122233344")))
-                .andExpect(jsonPath("$._links.self.href", is(BASE + "/sessions/10/votes/99")));
+                .andExpect(jsonPath("$.associateId", is(CPF)))
+                .andExpect(jsonPath("$._links.self.href").value(vote(SESSION_ID_10, VOTE_ID)));
     }
 
     @Test
     void count_returns200_withBody() throws Exception {
-        long sessionId = 10L;
-        var body = new VoteCountResponse(sessionId, 5L, 5, 2, VoteResult.APPROVED);
-        var model = EntityModel.of(body, Link.of(BASE + "/sessions/" + sessionId + "/votes/count").withSelfRel());
+        var body = new VoteCountResponse(SESSION_ID_10, 5L, 5, 2, VoteResult.APPROVED);
+        var model = EntityModel.of(body, Link.of(voteCount(SESSION_ID_10)).withSelfRel());
 
-        Mockito.when(service.count(sessionId)).thenReturn(body);
+        Mockito.when(service.count(SESSION_ID_10)).thenReturn(body);
         Mockito.when(countModelAssembler.toModel(body)).thenReturn(model);
 
-        mvc.perform(get(BASE + "/sessions/{sessionId}/votes/count", sessionId))
+        mvc.perform(get(voteCount(SESSION_ID_10)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith("application/hal+json"))
                 .andExpect(jsonPath("$.sessionId", is(10)))
                 .andExpect(jsonPath("$.yes", is(5)))
                 .andExpect(jsonPath("$.no", is(2)))
-                .andExpect(jsonPath("$._links.self.href", is(BASE + "/sessions/10/votes/count")));
+                .andExpect(jsonPath("$._links.self.href").value(voteCount(SESSION_ID_10)));
     }
 
     @Test
     void checkIfCanOpen_returns200() throws Exception {
-        long topicId = 1L;
-        Mockito.when(service.canOpenSession(eq(topicId), any(LocalDateTime.class))).thenReturn(true);
+        Mockito.when(service.canOpenSession(eq(TOPIC_ID), any(LocalDateTime.class))).thenReturn(true);
 
-        mvc.perform(post(BASE + "/topics/{topicId}/sessions:check-open", topicId))
+        mvc.perform(post(checkOpen(TOPIC_ID)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.canOpen", is(true)));
+                .andExpect(jsonPath("$.canOpen").value(true));
     }
 
     @Test
     void isSessionOpenNow_returns200() throws Exception {
-        long sessionId = 10L;
-        Mockito.when(service.isSessionOpenNow(eq(sessionId), any(LocalDateTime.class))).thenReturn(false);
+        Mockito.when(service.isSessionOpenNow(eq(SESSION_ID_10), any(LocalDateTime.class))).thenReturn(false);
 
-        mvc.perform(get(BASE + "/sessions/{sessionId}/open-now", sessionId))
+        mvc.perform(get(openNow(SESSION_ID_10)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.openNow", is(false)));
+                .andExpect(jsonPath("$.openNow").value(false));
     }
 }

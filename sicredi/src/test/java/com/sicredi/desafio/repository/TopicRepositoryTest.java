@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import static com.sicredi.desafio.helpers.TestConstants.DESCRIPTION_TOPIC;
+import static com.sicredi.desafio.helpers.TestConstants.NAME_TOPIC;
+import static com.sicredi.desafio.helpers.TestConstants.NAME_TOPIC_2;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -23,21 +26,21 @@ public class TopicRepositoryTest {
     @BeforeEach
     void setUp() {
         topic = topicRepository.save(
-                TestFixtures.topic("Pauta X", "Description Pauta X")
+                TestFixtures.topic(NAME_TOPIC, DESCRIPTION_TOPIC)
         );
     }
 
     @Test
     void existsByTitleIgnoreCase_returnsTrueWhenDuplicate() {
-        assertThat(topicRepository.existsByTitleIgnoreCase("pauta x")).isTrue();
-        assertThat(topicRepository.existsByTitleIgnoreCase("outra pauta")).isFalse();
+        assertThat(topicRepository.existsByTitleIgnoreCase(NAME_TOPIC)).isTrue();
+        assertThat(topicRepository.existsByTitleIgnoreCase(NAME_TOPIC_2)).isFalse();
     }
 
     @Test
     void saveAndFindById_persistsCorrectly() {
         var found = topicRepository.findById(topic.getId()).orElseThrow();
-        assertThat(found.getTitle()).isEqualTo("Pauta X");
-        assertThat(found.getDescription()).isEqualTo("Description Pauta X");
+        assertThat(found.getTitle()).isEqualTo(NAME_TOPIC);
+        assertThat(found.getDescription()).isEqualTo(DESCRIPTION_TOPIC);
         assertThat(found.getStatus()).isEqualTo(TopicStatus.PENDING);
     }
 
@@ -45,5 +48,14 @@ public class TopicRepositoryTest {
     void deleteById_removesEntity() {
         topicRepository.deleteById(topic.getId());
         assertThat(topicRepository.findById(topic.getId())).isEmpty();
+    }
+
+    @Test
+    void existsByIdAndStatus_returnsTrue_whenTopicHasStatus() {
+        topic.setStatus(TopicStatus.USED);
+        topicRepository.save(topic);
+
+        boolean exists = topicRepository.existsByIdAndStatus(topic.getId(), TopicStatus.USED);
+        assertThat(exists).isTrue();
     }
 }

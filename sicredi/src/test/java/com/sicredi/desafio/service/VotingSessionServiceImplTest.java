@@ -25,6 +25,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static com.sicredi.desafio.helpers.TestConstants.NAME_TOPIC;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -56,7 +57,7 @@ public class VotingSessionServiceImplTest {
     @BeforeEach
     void init() {
         Instant now = ConvertDate.instantNow();
-        topic = Topic.builder().id(1L).title("Sessão Pauta").build();
+        topic = Topic.builder().id(1L).title(NAME_TOPIC).build();
         session = TestFixtures.session(topic, VotingSessionStatus.OPEN, now, ConvertDate.instantPlusMinutes(1));
         response = new SessionResponse(10L, topic.getId(), now, ConvertDate.instantPlusMinutes(1));
     }

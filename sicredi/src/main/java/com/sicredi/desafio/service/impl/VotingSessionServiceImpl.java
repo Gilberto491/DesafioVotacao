@@ -18,13 +18,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
+import static com.sicredi.desafio.constants.ApiConstants.DEFAULT_DURATION_MIN;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class VotingSessionServiceImpl implements VotingSessionService {
 
-    private static final int DEFAULT_DURATION_MIN = 1;
     private final VotingSessionRepository sessionRepo;
     private final TopicRepository topicRepo;
     private final SessionMapper mapper;

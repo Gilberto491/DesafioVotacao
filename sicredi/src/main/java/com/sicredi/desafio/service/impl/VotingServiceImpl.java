@@ -1,6 +1,7 @@
 package com.sicredi.desafio.service.impl;
 
 import com.sicredi.desafio.domain.VotingSession;
+import com.sicredi.desafio.domain.enumerations.TopicStatus;
 import com.sicredi.desafio.domain.enumerations.VotingSessionStatus;
 import com.sicredi.desafio.dto.request.VoteCreateRequest;
 import com.sicredi.desafio.dto.response.VoteCountResponse;
@@ -45,6 +46,9 @@ public class VotingServiceImpl implements VotingService {
     public boolean canOpenSession(Long topicId, LocalDateTime now) {
         log.info("Checking if can open session topicId={} now={}", topicId, now);
         assertTopicExists(topicId);
+
+        if (topicRepo.existsByIdAndStatus(topicId, TopicStatus.USED)) return false;
+
         return !sessionRepo.existsByTopicIdAndStatusAndOpensAtBeforeAndClosesAtAfter(
                 topicId, VotingSessionStatus.OPEN, now, now);
     }

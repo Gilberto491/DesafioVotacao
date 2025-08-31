@@ -8,6 +8,8 @@ import com.sicredi.desafio.exception.ConflictException;
 import com.sicredi.desafio.exception.NotFoundException;
 import com.sicredi.desafio.mapper.TopicMapper;
 import com.sicredi.desafio.repository.TopicRepository;
+import com.sicredi.desafio.repository.VoteRepository;
+import com.sicredi.desafio.repository.VotingSessionRepository;
 import com.sicredi.desafio.service.impl.TopicServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,11 +26,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static com.sicredi.desafio.helpers.TestConstants.DESCRIPTION_TOPIC;
+import static com.sicredi.desafio.helpers.TestConstants.NAME_TOPIC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -41,6 +44,10 @@ public class TopicServiceImplTest {
     private TopicRepository topicRepo;
     @Mock
     private TopicMapper mapper;
+    @Mock
+    VoteRepository voteRepo;
+    @Mock
+    VotingSessionRepository votingSessionRepo;
 
     @InjectMocks
     private TopicServiceImpl service;
@@ -54,14 +61,14 @@ public class TopicServiceImplTest {
 
     @BeforeEach
     void init() {
-        req = new TopicCreateRequest("Pauta X", "Description Pauta X");
-        entity = Topic.builder().id(1L).title("Pauta X").description("Description Pauta X").build();
-        resp = new TopicResponse(1L, "Pauta X", "Description Pauta X", TopicStatus.PENDING, LocalDateTime.now());
+        req = new TopicCreateRequest(NAME_TOPIC, DESCRIPTION_TOPIC);
+        entity = Topic.builder().id(1L).title(NAME_TOPIC).description(DESCRIPTION_TOPIC).build();
+        resp = new TopicResponse(1L, NAME_TOPIC, DESCRIPTION_TOPIC, TopicStatus.PENDING, LocalDateTime.now());
     }
 
     @Test
     void create_persistsAndReturnsResponse_whenTitleIsUnique() {
-        when(topicRepo.existsByTitleIgnoreCase("Pauta X")).thenReturn(false);
+        when(topicRepo.existsByTitleIgnoreCase(NAME_TOPIC)).thenReturn(false);
         when(mapper.toEntity(req)).thenReturn(entity);
         when(topicRepo.save(entity)).thenReturn(entity);
         when(mapper.toResponse(entity)).thenReturn(resp);
@@ -70,12 +77,12 @@ public class TopicServiceImplTest {
 
         assertThat(out).isEqualTo(resp);
         verify(topicRepo).save(topicCaptor.capture());
-        assertThat(topicCaptor.getValue().getTitle()).isEqualTo("Pauta X");
+        assertThat(topicCaptor.getValue().getTitle()).isEqualTo(NAME_TOPIC);
     }
 
     @Test
     void create_throwsConflict_whenTitleAlreadyExists() {
-        when(topicRepo.existsByTitleIgnoreCase("Pauta X")).thenReturn(true);
+        when(topicRepo.existsByTitleIgnoreCase(NAME_TOPIC)).thenReturn(true);
         assertThatThrownBy(() -> service.create(req))
                 .isInstanceOf(ConflictException.class)
                 .hasMessageContaining("topic.title-already-exists");
@@ -115,10 +122,11 @@ public class TopicServiceImplTest {
     @Test
     void delete_removes_whenExists() {
         when(topicRepo.existsById(1L)).thenReturn(true);
-        doNothing().when(topicRepo).deleteById(1L);
 
         service.delete(1L);
 
+        verify(voteRepo).deleteByTopic_Id(1L);
+        verify(votingSessionRepo).deleteByTopic_Id(1L);
         verify(topicRepo).deleteById(1L);
     }
 

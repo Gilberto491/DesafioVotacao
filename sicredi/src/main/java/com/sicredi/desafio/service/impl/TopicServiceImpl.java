@@ -7,6 +7,8 @@ import com.sicredi.desafio.exception.ConflictException;
 import com.sicredi.desafio.exception.NotFoundException;
 import com.sicredi.desafio.mapper.TopicMapper;
 import com.sicredi.desafio.repository.TopicRepository;
+import com.sicredi.desafio.repository.VoteRepository;
+import com.sicredi.desafio.repository.VotingSessionRepository;
 import com.sicredi.desafio.service.TopicService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class TopicServiceImpl implements TopicService {
 
     private final TopicRepository topicRepo;
+    private final VotingSessionRepository votingSessionRepo;
+    private final VoteRepository voteRepo;
     private final TopicMapper mapper;
 
     @Transactional
@@ -50,6 +54,9 @@ public class TopicServiceImpl implements TopicService {
     public void delete(Long id) {
         log.info("Deleting topic id={}", id);
         if (!topicRepo.existsById(id)) throw new NotFoundException("topic.not-found");
+
+        voteRepo.deleteByTopic_Id(id);
+        votingSessionRepo.deleteByTopic_Id(id);
         topicRepo.deleteById(id);
     }
 

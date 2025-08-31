@@ -1,0 +1,218 @@
+{
+	"info": {
+		"_postman_id": "4bcc3042-1476-41bd-bc9c-56c3924c96ed",
+		"name": "DSF",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39517440"
+	},
+	"item": [
+		{
+			"name": "Topic",
+			"item": [
+				{
+					"name": "Create Topic",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"Assembleia Extraordinária\",\r\n  \"description\": \"Pauta de votação\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api}}/topics",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"topics"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Topic",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api}}/topics",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"topics"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Topic By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api}}/topics/1",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"topics",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Topic",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{api}}/topics/1",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"topics",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Session",
+			"item": [
+				{
+					"name": "Create Session",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"durationMinutes\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api}}/topics/1/sessions",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"topics",
+								"1",
+								"sessions"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Vote",
+			"item": [
+				{
+					"name": "Check Open",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{api}}/topics/1/sessions:check-open",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"topics",
+								"1",
+								"sessions:check-open"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Open Now",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api}}/sessions/1/open-now",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"sessions",
+								"1",
+								"open-now"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Vote Topic",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"cpf\": \"62322147060\",\r\n    \"choice\": \"NAO\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api}}/sessions/1/votes",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"sessions",
+								"1",
+								"votes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Count Vote",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api}}/sessions/1/votes/count",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"sessions",
+								"1",
+								"votes",
+								"count"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
