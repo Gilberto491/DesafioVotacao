@@ -39,7 +39,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/votacao
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
-      JAVA_TOOL_OPTIONS: "-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
+      JAVA_TOOL_OPTIONS: "-Xms2g -Xmx2g -XX:+UseG1GC -XX:MaxGCPauseMillis=100 -XX:+UseStringDeduplication -Dfile.encoding=UTF-8"
       MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,info,prometheus"
       MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
       SERVER_PORT: "8080"
