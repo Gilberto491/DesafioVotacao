@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "4bcc3042-1476-41bd-bc9c-56c3924c96ed",
+		"_postman_id": "16f20ad2-68c5-42ee-95b0-2a8d3513e100",
 		"name": "DSF",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "39517440"
+		"_exporter_id": "23292018"
 	},
 	"item": [
 		{
@@ -132,14 +132,15 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{api}}/topics/1/sessions:check-open",
+							"raw": "{{api}}/topics/1/sessions/check-open",
 							"host": [
 								"{{api}}"
 							],
 							"path": [
 								"topics",
 								"1",
-								"sessions:check-open"
+								"sessions",
+								"check-open"
 							]
 						}
 					},

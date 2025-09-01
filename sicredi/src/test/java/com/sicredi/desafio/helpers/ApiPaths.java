@@ -37,7 +37,7 @@ public class ApiPaths {
     }
 
     public static String checkOpen(long topicId) {
-        return topic(topicId) + "/sessions:check-open";
+        return topic(topicId) + "/sessions/check-open";
     }
 
     public static String openNow(long sessionId) {

@@ -41,8 +41,8 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     @Cacheable(
-            cacheNames = "topicsPage",
-            key = "'p:' + #p.pageNumber + ':s:' + #p.pageSize + ':sort:' + #p.sort.toString()",
+            cacheNames = "topics",
+            key = "'p'+#p.pageNumber+'s'+#p.pageSize+'o'+(#p.sort?:'')",
             unless = "#result == null || #result.isEmpty()"
     )
     public Page<TopicResponse> list(Pageable p) {
