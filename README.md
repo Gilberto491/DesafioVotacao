@@ -59,7 +59,34 @@ Solução para gestão de sessões de votação em cooperativismo:
 
 ---
 
-## 🧪 Testes e Performance
+## 🏗 Arquitetura e Modelagem
+
+<p align="center">
+  <img src="./docs/arquitetura.png" alt="Arquitetura do Sistema" width="45%"/>
+  &nbsp;&nbsp;&nbsp;
+  <img src="./docs/modelagem.png" alt="Modelagem do Banco de Dados" width="45%"/>
+</p>
+
+**Arquitetura do Sistema**  
+> A arquitetura foi construída utilizando **Spring Boot** como API principal, integrada ao banco **PostgreSQL**, monitorada com **Prometheus** e **Grafana**, além de testes de carga com **K6**.
+
+**Modelagem do Banco de Dados**  
+> A modelagem reflete as entidades principais do sistema de votação, incluindo pautas, sessões de votação e votos, estruturadas para manter integridade e escalabilidade.
+
+## 🧪 Testes de Performance
+
+<p align="center">
+  <img src="./docs/topic-create.png" alt="Teste de Performance - Criação de Pauta" width="45%"/>
+  &nbsp;&nbsp;&nbsp;
+  <img src="./docs/vote-session.png" alt="Teste de Performance - Sessão de Votação" width="45%"/>
+</p>
+
+Os testes de performance foram realizados nos dois **endpoints críticos do sistema**:
+- **Criação de pauta** (`/topics`)
+- **Registro de votos** (`/votes`)
+
+> Os cenários de carga foram executados com o **K6**, simulando múltiplos usuários concorrentes.  
+> Obtivemos **ótimos resultados**, com tempos de resposta estáveis e sem falhas significativas, conforme mostrado nas métricas acima.
 
 ### ✅ Testes automatizados
 ```bash
