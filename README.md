@@ -89,8 +89,64 @@ http_req_failed → taxa de falhas de requisições
 
 ---
 
+## 📂 Estrutura do Projeto
+
+```
+desafio-votacao/
+│── .github/workflows/
+│── k6-performance/
+│── postman/
+│── sicredi/
+│ ├── src/main/java/com/sicredi/desafio/
+│ │ ├── controller/
+│ │ ├── service/
+│ │ ├── repository/
+│ │ ├── domain/
+│ │ ├── dto/ 
+│ │ └── config/ 
+│ └── src/test/java/com/sicredi/desafio/
+│ ├── controller/
+│ ├── service/
+│ └── repository/
+│── docker-compose.yml
+│── pom.xml
+│── README.md
+```
+
 ## 🔒 Políticas e Regras de Negócio
 - Cada associado pode **votar apenas uma vez por pauta**.  
 - Uma sessão só pode ser aberta se a pauta não possuir outra sessão ativa.  
 - Ao encerrar, a sessão muda status para **USED** e não pode ser reaberta.  
-- Resultados contabilizam todos os votos válidos (`YES` / `NO`).  
+- Resultados contabilizam todos os votos válidos (`YES` / `NO`).
+
+---
+
+## ▶️ Como Executar o Projeto (Local/Container/Cloud)
+
+### Local (sem containers)
+```
+# Pré-requisitos: Java 17 + Maven + PostgreSQL
+git clone https://github.com/Gilberto491/DesafioVotacao.git
+cd desafio-votacao/sicredi
+mvn spring-boot:run
+```
+
+### Com Docker/Podman
+```
+git clone https://github.com/Gilberto491/DesafioVotacao.git
+cd desafio-votacao/sicredi
+podman-compose up -d
+```
+
+## 🚀 Futuras Melhorias
+- Autenticação com **JWT** para segurança
+- Pipeline CI/CD completo com deploy automatizado
+- Dashboard customizado no Grafana para KPIs de negócio
+- Mais cenários de testes de carga (stress e soak tests)
+  
+---
+
+- ## 👤 Contribuidores / Autor
+- **Junior Fredes**  
+  - 💼 [LinkedIn](https://www.linkedin.com/in/gilbertofredes/)  
+  - 💻 [GitHub](https://github.com/gilberto491)  
