@@ -1,6 +1,6 @@
 # Desafio de Votação (Sicredi) 🗳️
 
-[![Build](https://img.shields.io/github/actions/workflow/status/Gilberto491/DesafioVotacao/ci.yml?branch=main)](https://github.com/Gilberto491/DesafioVotacao/actions)
+[![Build](https://img.shields.io/github/actions/workflow/status/Gilberto491/DesafioVotacao/ci.yml?branch=develop)](https://github.com/Gilberto491/DesafioVotacao/actions)
 [![Docker Ready](https://img.shields.io/badge/docker-ready-blue)](#execução-com-docker)
 
 ## 📌 Apresentação do Desafio
@@ -24,11 +24,11 @@ Solução para gestão de sessões de votação em cooperativismo:
 - **Docs:** OpenAPI/Swagger
 
 ## 🌐 URLs Online
-- **API Base:** `http://34.61.3.188:8080/api/v1`
-- **Swagger UI:** `http://34.61.3.188:8080/swagger-ui/index.html`
-- **Prometheus:** `http://34.61.3.188:9090`
-- **Grafana:** `http://34.61.3.188:3000` (Dashboard: <link>)
-- **Healthcheck:** `http://34.61.3.188:8080/actuator/health`
+- 📊 **API Base:** <a href="http://34.61.3.188:8080/api/v1" target="_blank">API Base</a>
+- 📑 **Swagger UI:** <a href="http://34.61.3.188:8080/swagger-ui/index.html" target="_blank">Swagger UI</a>
+- 📈 **Prometheus:** <a href="http://34.61.3.188:9090" target="_blank">Prometheus</a>
+- 📊 **Grafana:** <a href="http://34.61.3.188:3000" target="_blank">Grafana</a></li>
+- ❤️ **Healthcheck:** <a href="http://34.61.3.188:8080/actuator/health" target="_blank">Healthcheck</a>
 
 ## 🔗 Endpoints da API
 
