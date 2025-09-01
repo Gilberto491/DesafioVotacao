@@ -12,6 +12,8 @@ import com.sicredi.desafio.repository.VotingSessionRepository;
 import com.sicredi.desafio.service.TopicService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,7 @@ public class TopicServiceImpl implements TopicService {
 
     @Transactional
     @Override
+    @CacheEvict(cacheNames = "topicsPage", allEntries = true)
     public TopicResponse create(TopicCreateRequest req) {
         log.info("Creating topic title={}", req.title());
         assertTitleUnique(req.title());
@@ -37,6 +40,11 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
+    @Cacheable(
+            cacheNames = "topicsPage",
+            key = "'p:' + #p.pageNumber + ':s:' + #p.pageSize + ':sort:' + #p.sort.toString()",
+            unless = "#result == null || #result.isEmpty()"
+    )
     public Page<TopicResponse> list(Pageable p) {
         log.info("Listing topics page={} size={} sort={}",
                 p.getPageNumber(), p.getPageSize(), p.getSort());
@@ -51,6 +59,7 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = "topicsPage", allEntries = true)
     public void delete(Long id) {
         log.info("Deleting topic id={}", id);
         if (!topicRepo.existsById(id)) throw new NotFoundException("topic.not-found");
