@@ -103,6 +103,44 @@ http_req_duration → tempo médio das requisições
 checks → porcentagem de checks que passaram
 http_req_failed → taxa de falhas de requisições
 
+# 🔁 Fluxos de teste (essenciais)
+
+### 1) Happy path – criar pauta, abrir sessão e votar
+1. **POST** `/topics` → cria pauta  
+2. **POST** `/sessions` → abre sessão para a pauta  
+3. **POST** `/votes` → registra voto  
+4. **GET** `/votes/results/{topicId}` (ou **GET** `Count Vote`) → confere resultado  
+
+_Status esperados:_ `201, 201, 201/200, 200`
+
+---
+
+### 2) Voto duplicado (regra de negócio)
+1. Criar pauta → abrir sessão → votar 1ª vez (OK)  
+2. **POST** `/votes` novamente com o mesmo CPF → deve falhar  
+
+_Status esperado:_ `409` ou `422`
+
+---
+
+### 3) Sessão expirada
+1. Criar pauta → abrir sessão com tempo curto  
+2. Tentar votar após expiração  
+3. **POST** `/votes` → deve falhar  
+
+_Status esperado:_ `409` ou `422`
+
+---
+
+### 4) Consultas e limpeza (sanidade)
+1. **GET** `/topics` → lista todas as pautas  
+2. **GET** `/topics/{id}` → detalhe de uma pauta  
+3. **DEL** `/topics/{id}` → remove pauta (quando permitido pela regra)  
+
+_Status esperados:_ `200, 200, 204`
+
+---
+
   ## 🎯 Tarefas Bônus
 - [x] **Validação externa de CPF** (mockado para efeito do desafio)
 - [x] **Observabilidade** com Prometheus + Grafana
@@ -139,6 +177,8 @@ desafio-votacao/
 │── pom.xml
 │── README.md
 ```
+
+> Além das pastas principais, o projeto conta também com assembler, constants, exception, external, helpers e mapper, que dão suporte à organização e boas práticas no código (separação de responsabilidades, centralização de mensagens e utilitários, integração com sistemas externos e mapeamentos automáticos).
 
 ## 🔒 Políticas e Regras de Negócio
 - Cada associado pode **votar apenas uma vez por pauta**.  
