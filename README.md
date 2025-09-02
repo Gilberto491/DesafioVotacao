@@ -27,11 +27,10 @@ Solução para gestão de sessões de votação em cooperativismo:
 - **Cache:** Redis
 
 ## 🌐 URLs Online
-- 📊 **API Base:** <a href="http://34.61.3.188:8080/api/v1/topics" target="_blank">API Base</a>
-- 📑 **Swagger UI:** <a href="http://34.61.3.188:8080/swagger-ui/index.html" target="_blank">Swagger UI</a>
-- 📈 **Prometheus:** <a href="http://34.61.3.188:9090" target="_blank">Prometheus</a>
-- 📊 **Grafana:** <a href="http://34.61.3.188:3000" target="_blank">Grafana</a></li>
-- ❤️ **Healthcheck:** <a href="http://34.61.3.188:8080/actuator/health" target="_blank">Healthcheck</a>
+- 📊 **API Base:** <a href="http://34.59.158.212:8080/api/v1/topics" target="_blank">API Base</a>
+- 📑 **Swagger UI:** <a href="http://34.59.158.212:8080/swagger-ui/index.html" target="_blank">Swagger UI</a>
+- 📈 **Prometheus:** <a href="http://34.59.158.212:9090" target="_blank">Prometheus</a>
+- 📊 **Grafana:** <a href="http://34.59.158.212:3000" target="_blank">Grafana</a></li>
 
 ## 🗂️ Versionamento
 
@@ -161,6 +160,20 @@ _Status esperados:_ `200, 200, 204`
 
 ---
 
+## 📖 Swagger (API Docs)
+
+A aplicação conta com documentação interativa via Swagger, disponível em:
+
+- **Local**:    [Swagger Local](http://localhost:8080/swagger-ui/index.html)
+- **Ambiente**: [Swagger Ambiente](http://34.59.158.212:8080/swagger-ui/index.html)
+
+⚠️ **Importante**  
+- Como a parte de **segurança foi abstraída**, não é possível realizar chamadas diretamente pelo Swagger no ambiente remoto devido a restrições de **CORS**.  
+- No ambiente **local**, o Swagger funciona normalmente tanto para documentação quanto para chamadas.  
+- No ambiente de **deploy**, o Swagger deve ser usado **apenas como documentação**.
+
+---
+
   ## 🎯 Tarefas Bônus
 - [x] **Validação externa de CPF** (mockado para efeito do desafio)
 - [x] **Observabilidade** com Prometheus + Grafana
@@ -218,14 +231,26 @@ Sempre que um novo tópico é criado ou deletado, o cache é automaticamente atu
 - Resultados contabilizam todos os votos válidos (`YES` / `NO`).
 - O **CPF** informado passa por verificação de validade antes de registrar o voto.
 - Ao votar, pode haver retorno aleatório de erro: **`UNABLE_TO_VOTE`**.
-  
+
+## 🌱 Fluxo Git
+
+Este projeto segue um fluxo baseado no **Git Flow** simplificado:
+
+- **develop**: utilizada para desenvolvimento contínuo, onde novas features e correções são integradas.
+- **release/x.y.z**: criada a partir da `develop` para estabilização de uma versão antes de ir para produção.  
+  Exemplo: `release/1.0.0`.
+- **main**: contém apenas versões estáveis, correspondendo ao que está em produção.
+
+🔖 As versões estáveis são marcadas com **tags** (ex.: `v0.1.0`, `v0.1.1`, `v1.0.0`) e utilizadas para gerar **releases** no GitHub.
+
 ---
 
 ## ▶️ Como Executar o Projeto (Local/Container/Cloud)
 
-### Local (sem containers)
+### 🚀 Local (sem containers)
 ```
-# Pré-requisitos: Java 17 + Maven + PostgreSQL
+# Pré-requisitos: Java 17 + Maven + PostgreSQL + redis + Grafana/Prometheus (Opcional)
+
 git clone https://github.com/Gilberto491/DesafioVotacao.git
 cd desafio-votacao/sicredi
 mvn spring-boot:run
@@ -242,6 +267,7 @@ docker-compose up -d
 - Autenticação com **JWT** para segurança
 - Pipeline CI/CD completo com deploy automatizado
 - Integração com **SonarQube/SonarCloud**: análise estática e cobertura
+- Armazenamento de artefatos em repositório **Nexus**
   
 ---
 
