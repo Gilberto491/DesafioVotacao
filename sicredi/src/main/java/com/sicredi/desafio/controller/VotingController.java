@@ -47,7 +47,7 @@ public class VotingController {
     @Operation(summary = "Checks if a session can be opened for a topic")
     @ApiResponse(responseCode = "200", description = "OK")
     @ReadErrors
-    @PostMapping("/topics/{topicId}/sessions/check-open")
+    @GetMapping("/topics/{topicId}/sessions/check-open")
     public ResponseEntity<OpenSessionCheckResponse> checkIfCanOpen(@PathVariable Long topicId) {
         log.info("POST /topics/{}/sessions:check-open start", topicId);
         boolean can = service.canOpenSession(topicId, LocalDateTime.now(ZoneOffset.UTC));

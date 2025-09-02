@@ -13,8 +13,8 @@ import com.sicredi.desafio.service.TopicService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +29,7 @@ public class TopicServiceImpl implements TopicService {
     private final VotingSessionRepository votingSessionRepo;
     private final VoteRepository voteRepo;
     private final TopicMapper mapper;
+    private final TopicCacheService cache;
 
     @Transactional
     @Override
@@ -40,15 +41,10 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    @Cacheable(
-            cacheNames = "topics",
-            key = "'p=' + #root.args[0].pageNumber + ':s=' + #root.args[0].pageSize + ':o=' + (#root.args[0].sort?:'')",
-            unless = "#result == null || #result.isEmpty()"
-    )
     public Page<TopicResponse> list(Pageable p) {
         log.info("Listing topics page={} size={} sort={}",
                 p.getPageNumber(), p.getPageSize(), p.getSort());
-        return topicRepo.findAll(p).map(mapper::toResponse);
+        return new PageImpl<>(cache.listCached(p).content(), p, cache.listCached(p).total());
     }
 
     @Override
