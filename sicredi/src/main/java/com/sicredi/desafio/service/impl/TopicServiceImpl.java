@@ -32,7 +32,7 @@ public class TopicServiceImpl implements TopicService {
 
     @Transactional
     @Override
-    @CacheEvict(cacheNames = "topicsPage", allEntries = true)
+    @CacheEvict(cacheNames = "topics", allEntries = true)
     public TopicResponse create(TopicCreateRequest req) {
         log.info("Creating topic title={}", req.title());
         assertTitleUnique(req.title());
@@ -42,7 +42,7 @@ public class TopicServiceImpl implements TopicService {
     @Override
     @Cacheable(
             cacheNames = "topics",
-            key = "'p'+#p.pageNumber+'s'+#p.pageSize+'o'+(#p.sort?:'')",
+            key = "'p=' + #root.args[0].pageNumber + ':s=' + #root.args[0].pageSize + ':o=' + (#root.args[0].sort?:'')",
             unless = "#result == null || #result.isEmpty()"
     )
     public Page<TopicResponse> list(Pageable p) {
@@ -59,7 +59,7 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     @Transactional
-    @CacheEvict(cacheNames = "topicsPage", allEntries = true)
+    @CacheEvict(cacheNames = "topics", allEntries = true)
     public void delete(Long id) {
         log.info("Deleting topic id={}", id);
         if (!topicRepo.existsById(id)) throw new NotFoundException("topic.not-found");

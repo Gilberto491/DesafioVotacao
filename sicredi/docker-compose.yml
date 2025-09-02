@@ -30,7 +30,7 @@ services:
     restart: always
 
   sicredi-api:
-    image: docker.io/juniorfredes/sicredi-api:1.0.1
+    image: docker.io/juniorfredes/sicredi-api:1.0.2
     container_name: api-sicredi
     environment:
       SPRING_PROFILES_ACTIVE: prod
