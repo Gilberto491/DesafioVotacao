@@ -97,7 +97,7 @@ public class VotingControllerTest {
     void checkIfCanOpen_returns200() throws Exception {
         Mockito.when(service.canOpenSession(eq(TOPIC_ID), any(LocalDateTime.class))).thenReturn(true);
 
-        mvc.perform(post(checkOpen(TOPIC_ID)))
+        mvc.perform(get(checkOpen(TOPIC_ID)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.canOpen").value(true));
     }

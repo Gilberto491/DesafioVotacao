@@ -1,121 +1,251 @@
-# Votação
+# Desafio de Votação (Sicredi) 🗳️
 
-## Objetivo
+[![Build](https://img.shields.io/github/actions/workflow/status/Gilberto491/DesafioVotacao/ci.yml?branch=develop)](https://github.com/Gilberto491/DesafioVotacao/actions)
+[![Docker Ready](https://img.shields.io/badge/docker-ready-blue)](#execução-com-docker)
 
-No cooperativismo, cada associado possui um voto e as decisões são tomadas em assembleias, por votação. Imagine que você deve criar uma solução para dispositivos móveis para gerenciar e participar dessas sessões de votação.
-Essa solução deve ser executada na nuvem e promover as seguintes funcionalidades através de uma API REST:
+## 📌 Apresentação do Desafio
+Solução para gestão de sessões de votação em cooperativismo:
+- Cada associado vota uma única vez por pauta (Sim/Não).
+- Ao votar, pode haver retorno aleatório de erro: **`UNABLE_TO_VOTE`**.
+- O **CPF** informado passa por verificação de validade antes de registrar o voto.
+- Abertura de sessões com duração configurável (default 1 minuto).
+- Contabilização de votos e apuração do resultado.
 
-- Cadastrar uma nova pauta
-- Abrir uma sessão de votação em uma pauta (a sessão de votação deve ficar aberta por
-  um tempo determinado na chamada de abertura ou 1 minuto por default)
-- Receber votos dos associados em pautas (os votos são apenas 'Sim'/'Não'. Cada associado
-  é identificado por um id único e pode votar apenas uma vez por pauta)
-- Contabilizar os votos e dar o resultado da votação na pauta
+> **Objetivo:** expor uma API REST escalável, observável e preparada para cloud.
 
-Para fins de exercício, a segurança das interfaces pode ser abstraída e qualquer chamada para as interfaces pode ser considerada como autorizada. A solução deve ser construída em java, usando Spring-boot, mas os frameworks e bibliotecas são de livre escolha (desde que não infrinja direitos de uso).
+---
 
-É importante que as pautas e os votos sejam persistidos e que não sejam perdidos com o restart da aplicação.
+## 🧰 Tecnologias e Ferramentas
+- **Linguagem/Framework:** Java 17, Spring Boot (Web, Data JPA, Validation, Actuator)
+- **Banco:** H2 (dev/test), PostgreSQL (prod)
+- **Migração:** Flyway
+- **Build/Testes:** Maven, JUnit 5, Mockito
+- **Observabilidade:** Prometheus, Grafana, API (health)
+- **Performance:** k6
+- **Container/Orquestração:** Docker/Podman + Docker Compose
+- **Docs:** OpenAPI/Swagger
+- **Cache:** Redis
 
-O foco dessa avaliação é a comunicação entre o backend e o aplicativo mobile. Essa comunicação é feita através de mensagens no formato JSON, onde essas mensagens serão interpretadas pelo cliente para montar as telas onde o usuário vai interagir com o sistema. A aplicação cliente não faz parte da avaliação, apenas os componentes do servidor. O formato padrão dessas mensagens será detalhado no anexo 1.
+## 🌐 URLs Online
+- 📊 **API Base:** <a href="http://34.61.3.188:8080/api/v1/topics" target="_blank">API Base</a>
+- 📑 **Swagger UI:** <a href="http://34.61.3.188:8080/swagger-ui/index.html" target="_blank">Swagger UI</a>
+- 📈 **Prometheus:** <a href="http://34.61.3.188:9090" target="_blank">Prometheus</a>
+- 📊 **Grafana:** <a href="http://34.61.3.188:3000" target="_blank">Grafana</a></li>
+- ❤️ **Healthcheck:** <a href="http://34.61.3.188:8080/actuator/health" target="_blank">Healthcheck</a>
 
-## Como proceder
+## 🗂️ Versionamento
 
-Por favor, **CLONE** o repositório e implemente sua solução, ao final, notifique a conclusão e envie o link do seu repositório clonado no GitHub, para que possamos analisar o código implementado.
-
-Lembre de deixar todas as orientações necessárias para executar o seu código.
-
-### Tarefas bônus
-
-- Tarefa Bônus 1 - Integração com sistemas externos
-  - Criar uma Facade/Client Fake que retorna aleátoriamente se um CPF recebido é válido ou não.
-  - Caso o CPF seja inválido, a API retornará o HTTP Status 404 (Not found). Você pode usar geradores de CPF para gerar CPFs válidos
-  - Caso o CPF seja válido, a API retornará se o usuário pode (ABLE_TO_VOTE) ou não pode (UNABLE_TO_VOTE) executar a operação. Essa operação retorna resultados aleatórios, portanto um mesmo CPF pode funcionar em um teste e não funcionar no outro.
-
-```
-// CPF Ok para votar
-{
-    "status": "ABLE_TO_VOTE
-}
-// CPF Nao Ok para votar - retornar 404 no client tb
-{
-    "status": "UNABLE_TO_VOTE
-}
-```
-
-Exemplos de retorno do serviço
-
-### Tarefa Bônus 2 - Performance
-
-- Imagine que sua aplicação possa ser usada em cenários que existam centenas de
-  milhares de votos. Ela deve se comportar de maneira performática nesses
-  cenários
-- Testes de performance são uma boa maneira de garantir e observar como sua
-  aplicação se comporta
-
-### Tarefa Bônus 3 - Versionamento da API
-
-○ Como você versionaria a API da sua aplicação? Que estratégia usar?
-
-## O que será analisado
-
-- Simplicidade no design da solução (evitar over engineering)
-- Organização do código
-- Arquitetura do projeto
-- Boas práticas de programação (manutenibilidade, legibilidade etc)
-- Possíveis bugs
-- Tratamento de erros e exceções
-- Explicação breve do porquê das escolhas tomadas durante o desenvolvimento da solução
-- Uso de testes automatizados e ferramentas de qualidade
-- Limpeza do código
-- Documentação do código e da API
-- Logs da aplicação
-- Mensagens e organização dos commits
-
-## Dicas
-
-- Teste bem sua solução, evite bugs
-- Deixe o domínio das URLs de callback passiveis de alteração via configuração, para facilitar
-  o teste tanto no emulador, quanto em dispositivos fisicos.
-  Observações importantes
-- Não inicie o teste sem sanar todas as dúvidas
-- Iremos executar a aplicação para testá-la, cuide com qualquer dependência externa e
-  deixe claro caso haja instruções especiais para execução do mesmo
-  Classificação da informação: Uso Interno
-
-## Anexo 1
-
-### Introdução
-
-A seguir serão detalhados os tipos de tela que o cliente mobile suporta, assim como os tipos de campos disponíveis para a interação do usuário.
-
-### Tipo de tela – FORMULARIO
-
-A tela do tipo FORMULARIO exibe uma coleção de campos (itens) e possui um ou dois botões de ação na parte inferior.
-
-O aplicativo envia uma requisição POST para a url informada e com o body definido pelo objeto dentro de cada botão quando o mesmo é acionado. Nos casos onde temos campos de entrada
-de dados na tela, os valores informados pelo usuário são adicionados ao corpo da requisição. Abaixo o exemplo da requisição que o aplicativo vai fazer quando o botão “Ação 1” for acionado:
+- O projeto adota versionamento semântico (**Semantic Versioning**), onde o versão final release foi fechado em **1.0.0**.  
+- A **API** também possui versão definida no seu **path base** (`/api/v1`), o que garante compatibilidade e facilita futuras evoluções.  
+- Essa configuração é centralizada na classe `ApiConstants`, permitindo alterar a versão em **apenas um local** para refletir em toda a aplicação:
 
 ```
-POST http://seudominio.com/ACAO1
-{
-    “campo1”: “valor1”,
-    “campo2”: 123,
-    “idCampoTexto”: “Texto”,
-    “idCampoNumerico: 999
-    “idCampoData”: “01/01/2000”
+public class ApiConstants {
+    private ApiConstants() { throw new IllegalStateException("Utility class"); }
+
+    public static final String BASE = "/api/v1";
 }
 ```
 
-Obs: o formato da url acima é meramente ilustrativo e não define qualquer padrão de formato.
+## 🔗 Endpoints da API
 
-### Tipo de tela – SELECAO
+### 📂 Topic
+- `POST /api/v1/topics` — Create Topic
+- `GET /api/v1/topics` — List Topics
+- `GET /api/v1/topics/{id}` — Topic By Id
+- `DELETE /api/v1/topics/{id}` — Delete Topic
 
-A tela do tipo SELECAO exibe uma lista de opções para que o usuário.
+### 📂 Session
+- `POST /api/v1/topics/{topicId}/sessions` — Create Session
 
-O aplicativo envia uma requisição POST para a url informada e com o body definido pelo objeto dentro de cada item da lista de seleção, quando o mesmo é acionado, semelhando ao funcionamento dos botões da tela FORMULARIO.
+### 📂 Vote
+- `GET /api/v1/topics/{topicId}/sessions/check-open` — Check Open
+- `GET /api/v1/sessions/{sessionId}/open-now` — Open Now  
+- `POST /api/v1/sessions/{sessionId}/votes` — Vote Topic
+- `GET /api/v1/sessions/{sessionId}/votes/count` — Count Vote
 
-# desafio-votacao
+  > **Detalhes completos:** consulte o Swagger.
 
-⚙️ Modelagem de Dados
+  ## ✨ Diferenciais do Projeto
+- **Migrations com Flyway** (versionadas e idempotentes)
+- **Mensagens em `messages.properties`** (i18n de erros/validações)
+- **Padrão de logs** (correlação, níveis e formatação para observabilidade)
+- **Actuator + Métricas** expostas para Prometheus
+- **Testes**: unidade e integração (controllers/services/repos)
+- **Pipeline CI**: build, testes e versões com tags
+- **Redis**: cache em ponto crucial do sistema
 
-<img width="565" height="948" alt="DER" src="https://github.com/user-attachments/assets/0c9813ac-b19f-4cd9-b186-74844af1e6bb" />
+---
+
+## 🏗 Arquitetura e Modelagem
+
+<p align="center">
+  <img src="./docs/arquitetura.png" alt="Arquitetura do Sistema" width="45%"/>
+  &nbsp;&nbsp;&nbsp;
+  <img src="./docs/modelagem.png" alt="Modelagem do Banco de Dados" width="45%"/>
+</p>
+
+**Arquitetura do Sistema**  
+> A arquitetura foi construída utilizando **Spring Boot** como API principal, integrada ao banco **PostgreSQL**, monitorada com **Prometheus** e **Grafana**, além de testes de carga com **K6**.
+
+**Modelagem do Banco de Dados**  
+> A modelagem reflete as entidades principais do sistema de votação, incluindo pautas, sessões de votação e votos, estruturadas para manter integridade e escalabilidade.
+
+## 🧪 Testes de Performance
+
+<p align="center">
+  <img src="./docs/topic-create.png" alt="Teste de Performance - Criação de Pauta" width="45%"/>
+  &nbsp;&nbsp;&nbsp;
+  <img src="./docs/vote-session.png" alt="Teste de Performance - Sessão de Votação" width="45%"/>
+</p>
+
+Os testes de performance foram realizados nos dois **endpoints críticos do sistema**:
+- **Criação de pauta** (`/topics`)
+- **Registro de votos** (`/votes`)
+
+> Os cenários de carga foram executados com o **K6**, simulando múltiplos usuários concorrentes.  
+> Obtivemos **ótimos resultados**, com tempos de resposta estáveis e sem falhas significativas, conforme mostrado nas métricas acima.
+
+### ✅ Testes automatizados
+```bash
+k6 run vote-session.js \
+  -e BASE_URL=http://localhost:8080 \
+  -e SESSION_ID=1 \
+  -e VUS=500 \
+  -e DURATION=1m
+```
+
+KPIs principais analisados:
+
+- http_req_duration → tempo médio das requisições
+
+- checks → porcentagem de checks que passaram
+
+- http_req_failed → taxa de falhas de requisições
+
+# 🔁 Fluxos de teste (essenciais)
+
+### 1) Happy path – criar pauta, abrir sessão e votar
+1. **POST** `/topics` → cria pauta  
+2. **POST** `/topics/{topicId}/sessions` → abre sessão para a pauta  
+3. **POST** `/sessions/{sessionId}/votes` → registra voto  
+4. **GET** `/sessions/{sessionId}/votes/count` → confere resultado  
+
+_Status esperados:_ `201, 201, 201/200, 200`
+
+---
+
+### 2) Voto duplicado (regra de negócio)
+1. Criar pauta → abrir sessão → votar 1ª vez (OK)  
+2. **POST** `/sessions/{sessionId}/votes` novamente com o mesmo CPF → deve falhar  
+
+_Status esperado:_ `409`
+
+---
+
+### 3) Sessão expirada
+1. Criar pauta → abrir sessão com tempo curto  
+2. Tentar votar após expiração  
+3. **POST** `/sessions/{sessionId}/votes` → deve falhar  
+
+_Status esperado:_ `422`
+
+---
+
+### 4) Consultas e limpeza (sanidade)
+1. **GET** `/topics` → lista todas as pautas  
+2. **GET** `/topics/{id}` → detalhe de uma pauta  
+3. **DEL** `/topics/{id}` → remove pauta (quando permitido pela regra)  
+
+_Status esperados:_ `200, 200, 204`
+
+---
+
+  ## 🎯 Tarefas Bônus
+- [x] **Validação externa de CPF** (mockado para efeito do desafio)
+- [x] **Observabilidade** com Prometheus + Grafana
+- [x] **Pipeline CI/CD** com GitHub Actions
+- [x] **Migrations com Flyway** para versionamento do schema
+- [x] **Mensagens em arquivo properties** (i18n de erros e validações)
+- [x] **Testes de performance com k6** (rodados em ambiente local)
+- [x] **Controle de versão** (através de tags)
+- [x] **Índices no banco de dados** para ganho de performance em consultas  
+- [x] **Cache com Redis** para otimizar a listagem de tópicos em cenários com grande volume de dados  
+
+> ⚠️ Os testes de carga foram executados **localmente**. O ambiente de VM na nuvem utiliza plano *free*, sujeito a restrições de disco e desempenho, podendo causar lentidão não relacionada ao código da aplicação.
+
+---
+
+## 📂 Estrutura do Projeto
+
+```
+desafio-votacao/
+│── .github/workflows/
+│── k6-performance/
+│── postman/
+│── sicredi/
+│ ├── src/main/java/com/sicredi/desafio/
+│ │ ├── controller/
+│ │ ├── service/
+│ │ ├── repository/
+│ │ ├── domain/
+│ │ ├── dto/ 
+│ │ └── config/ 
+│ └── src/test/java/com/sicredi/desafio/
+│ ├── controller/
+│ ├── service/
+│ └── repository/
+│── docker-compose.yml
+│── pom.xml
+│── README.md
+```
+
+> Além das pastas principais, o projeto conta também com assembler, constants, exception, external, helpers e mapper, que dão suporte à organização e boas práticas no código (separação de responsabilidades, centralização de mensagens e utilitários, integração com sistemas externos e mapeamentos automáticos).
+
+
+## ⚡ Cache
+
+Para otimizar a performance da aplicação e reduzir o tempo de resposta em cenários de grande volume de dados, foi implementado **cache** na **listagem de tópicos**.  
+
+A ideia é que, em situações onde há muitas pautas cadastradas, o cache evite consultas repetidas ao banco de dados, entregando resultados de forma mais rápida e eficiente.  
+
+Sempre que um novo tópico é criado ou deletado, o cache é automaticamente atualizado, garantindo consistência entre os dados armazenados e os retornados pela API.
+
+## 🔒 Políticas e Regras de Negócio
+- Cada associado pode **votar apenas uma vez por pauta**.  
+- Uma sessão só pode ser aberta se a pauta não possuir outra sessão ativa.  
+- Ao encerrar, a sessão muda status para **USED** e não pode ser reaberta.  
+- Resultados contabilizam todos os votos válidos (`YES` / `NO`).
+- O **CPF** informado passa por verificação de validade antes de registrar o voto.
+- Ao votar, pode haver retorno aleatório de erro: **`UNABLE_TO_VOTE`**.
+  
+---
+
+## ▶️ Como Executar o Projeto (Local/Container/Cloud)
+
+### Local (sem containers)
+```
+# Pré-requisitos: Java 17 + Maven + PostgreSQL
+git clone https://github.com/Gilberto491/DesafioVotacao.git
+cd desafio-votacao/sicredi
+mvn spring-boot:run
+```
+
+### 🐳 Com Docker/Podman
+```
+git clone https://github.com/Gilberto491/DesafioVotacao.git
+cd desafio-votacao/sicredi
+docker-compose up -d
+```
+
+## 🚀 Futuras Melhorias
+- Autenticação com **JWT** para segurança
+- Pipeline CI/CD completo com deploy automatizado
+- Integração com **SonarQube/SonarCloud**: análise estática e cobertura
+  
+---
+
+- ## 👤 Contribuidores / Autor
+- **Junior Fredes**  
+  - 💼 [LinkedIn](https://www.linkedin.com/in/gilbertofredes/)  
+  - 💻 [GitHub](https://github.com/gilberto491)  
