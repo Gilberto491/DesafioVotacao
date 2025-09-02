@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"title\": \"Assembleia Extraordinária\",\r\n  \"description\": \"Pauta de votação\"\r\n}",
+							"raw": "{\r\n  \"title\": \"Assembleia extraordinária\",\r\n  \"description\": \"Pauta de votação\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -58,13 +58,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api}}/topics/1",
+							"raw": "{{api}}/topics/{{topicId}}",
 							"host": [
 								"{{api}}"
 							],
 							"path": [
 								"topics",
-								"1"
+								"{{topicId}}"
 							]
 						}
 					},
@@ -76,13 +76,13 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{api}}/topics/1",
+							"raw": "{{api}}/topics/{{topicId}}",
 							"host": [
 								"{{api}}"
 							],
 							"path": [
 								"topics",
-								"1"
+								"{{topicId}}"
 							]
 						}
 					},
@@ -108,13 +108,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{api}}/topics/1/sessions",
+							"raw": "{{api}}/topics/{{topicId}}/sessions",
 							"host": [
 								"{{api}}"
 							],
 							"path": [
 								"topics",
-								"1",
+								"{{topicId}}",
 								"sessions"
 							]
 						}
@@ -129,16 +129,16 @@
 				{
 					"name": "Check Open",
 					"request": {
-						"method": "POST",
+						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api}}/topics/1/sessions/check-open",
+							"raw": "{{api}}/topics/{{topicId}}/sessions/check-open",
 							"host": [
 								"{{api}}"
 							],
 							"path": [
 								"topics",
-								"1",
+								"{{topicId}}",
 								"sessions",
 								"check-open"
 							]
@@ -152,13 +152,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api}}/sessions/1/open-now",
+							"raw": "{{api}}/sessions/{{sessionId}}/open-now",
 							"host": [
 								"{{api}}"
 							],
 							"path": [
 								"sessions",
-								"1",
+								"{{sessionId}}",
 								"open-now"
 							]
 						}
@@ -172,7 +172,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"cpf\": \"62322147060\",\r\n    \"choice\": \"NAO\"\r\n}",
+							"raw": "{\r\n    \"cpf\": \"62322147060\",\r\n    \"choice\": \"não\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -180,13 +180,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{api}}/sessions/1/votes",
+							"raw": "{{api}}/sessions/{{sessionId}}/votes",
 							"host": [
 								"{{api}}"
 							],
 							"path": [
 								"sessions",
-								"1",
+								"{{sessionId}}",
 								"votes"
 							]
 						}
@@ -199,13 +199,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api}}/sessions/1/votes/count",
+							"raw": "{{api}}/sessions/{{sessionId}}/votes/count",
 							"host": [
 								"{{api}}"
 							],
 							"path": [
 								"sessions",
-								"1",
+								"{{sessionId}}",
 								"votes",
 								"count"
 							]
