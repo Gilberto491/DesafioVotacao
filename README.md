@@ -6,6 +6,8 @@
 ## 📌 Apresentação do Desafio
 Solução para gestão de sessões de votação em cooperativismo:
 - Cada associado vota uma única vez por pauta (Sim/Não).
+- Ao votar, pode haver retorno aleatório de erro: **`UNABLE_TO_VOTE`**.
+- O **CPF** informado passa por verificação de validade antes de registrar o voto.
 - Abertura de sessões com duração configurável (default 1 minuto).
 - Contabilização de votos e apuração do resultado.
 
@@ -22,13 +24,28 @@ Solução para gestão de sessões de votação em cooperativismo:
 - **Performance:** k6
 - **Container/Orquestração:** Docker/Podman + Docker Compose
 - **Docs:** OpenAPI/Swagger
+- **Cache:** Redis
 
 ## 🌐 URLs Online
-- 📊 **API Base:** <a href="http://34.61.3.188:8080/api/v1" target="_blank">API Base</a>
+- 📊 **API Base:** <a href="http://34.61.3.188:8080/api/v1/topics" target="_blank">API Base</a>
 - 📑 **Swagger UI:** <a href="http://34.61.3.188:8080/swagger-ui/index.html" target="_blank">Swagger UI</a>
 - 📈 **Prometheus:** <a href="http://34.61.3.188:9090" target="_blank">Prometheus</a>
 - 📊 **Grafana:** <a href="http://34.61.3.188:3000" target="_blank">Grafana</a></li>
 - ❤️ **Healthcheck:** <a href="http://34.61.3.188:8080/actuator/health" target="_blank">Healthcheck</a>
+
+## 🗂️ Versionamento
+
+- O projeto adota versionamento semântico (**Semantic Versioning**), onde o versão final release foi fechado em **1.0.0**.  
+- A **API** também possui versão definida no seu **path base** (`/api/v1`), o que garante compatibilidade e facilita futuras evoluções.  
+- Essa configuração é centralizada na classe `ApiConstants`, permitindo alterar a versão em **apenas um local** para refletir em toda a aplicação:
+
+```
+public class ApiConstants {
+    private ApiConstants() { throw new IllegalStateException("Utility class"); }
+
+    public static final String BASE = "/api/v1";
+}
+```
 
 ## 🔗 Endpoints da API
 
@@ -39,13 +56,13 @@ Solução para gestão de sessões de votação em cooperativismo:
 - `DELETE /api/v1/topics/{id}` — Delete Topic
 
 ### 📂 Session
-- `POST /api/v1/sessions` — Create Session
+- `POST /api/v1/topics/{topicId}/sessions` — Create Session
 
 ### 📂 Vote
-- `POST /api/v1/votes/check-open` — Check Open
-- `GET /api/v1/votes/open-now` — Open Now
-- `POST /api/v1/votes` — Vote Topic
-- `GET /api/v1/votes/count` — Count Vote
+- `GET /api/v1/topics/{topicId}/sessions/check-open` — Check Open
+- `GET /api/v1/sessions/{sessionId}/open-now` — Open Now  
+- `POST /api/v1/sessions/{sessionId}/votes` — Vote Topic
+- `GET /api/v1/sessions/{sessionId}/votes/count` — Count Vote
 
   > **Detalhes completos:** consulte o Swagger.
 
@@ -56,6 +73,7 @@ Solução para gestão de sessões de votação em cooperativismo:
 - **Actuator + Métricas** expostas para Prometheus
 - **Testes**: unidade e integração (controllers/services/repos)
 - **Pipeline CI**: build, testes e versões com tags
+- **Redis**: cache em ponto crucial do sistema
 
 ---
 
@@ -99,17 +117,19 @@ k6 run vote-session.js \
 
 KPIs principais analisados:
 
-http_req_duration → tempo médio das requisições
-checks → porcentagem de checks que passaram
-http_req_failed → taxa de falhas de requisições
+- http_req_duration → tempo médio das requisições
+
+- checks → porcentagem de checks que passaram
+
+- http_req_failed → taxa de falhas de requisições
 
 # 🔁 Fluxos de teste (essenciais)
 
 ### 1) Happy path – criar pauta, abrir sessão e votar
 1. **POST** `/topics` → cria pauta  
-2. **POST** `/sessions` → abre sessão para a pauta  
-3. **POST** `/votes` → registra voto  
-4. **GET** `/votes/results/{topicId}` (ou **GET** `Count Vote`) → confere resultado  
+2. **POST** `/topics/{topicId}/sessions` → abre sessão para a pauta  
+3. **POST** `/sessions/{sessionId}/votes` → registra voto  
+4. **GET** `/sessions/{sessionId}/votes/count` → confere resultado  
 
 _Status esperados:_ `201, 201, 201/200, 200`
 
@@ -117,18 +137,18 @@ _Status esperados:_ `201, 201, 201/200, 200`
 
 ### 2) Voto duplicado (regra de negócio)
 1. Criar pauta → abrir sessão → votar 1ª vez (OK)  
-2. **POST** `/votes` novamente com o mesmo CPF → deve falhar  
+2. **POST** `/sessions/{sessionId}/votes` novamente com o mesmo CPF → deve falhar  
 
-_Status esperado:_ `409` ou `422`
+_Status esperado:_ `409`
 
 ---
 
 ### 3) Sessão expirada
 1. Criar pauta → abrir sessão com tempo curto  
 2. Tentar votar após expiração  
-3. **POST** `/votes` → deve falhar  
+3. **POST** `/sessions/{sessionId}/votes` → deve falhar  
 
-_Status esperado:_ `409` ou `422`
+_Status esperado:_ `422`
 
 ---
 
@@ -149,6 +169,8 @@ _Status esperados:_ `200, 200, 204`
 - [x] **Mensagens em arquivo properties** (i18n de erros e validações)
 - [x] **Testes de performance com k6** (rodados em ambiente local)
 - [x] **Controle de versão** (através de tags)
+- [x] **Índices no banco de dados** para ganho de performance em consultas  
+- [x] **Cache com Redis** para otimizar a listagem de tópicos em cenários com grande volume de dados  
 
 > ⚠️ Os testes de carga foram executados **localmente**. O ambiente de VM na nuvem utiliza plano *free*, sujeito a restrições de disco e desempenho, podendo causar lentidão não relacionada ao código da aplicação.
 
@@ -180,12 +202,23 @@ desafio-votacao/
 
 > Além das pastas principais, o projeto conta também com assembler, constants, exception, external, helpers e mapper, que dão suporte à organização e boas práticas no código (separação de responsabilidades, centralização de mensagens e utilitários, integração com sistemas externos e mapeamentos automáticos).
 
+
+## ⚡ Cache
+
+Para otimizar a performance da aplicação e reduzir o tempo de resposta em cenários de grande volume de dados, foi implementado **cache** na **listagem de tópicos**.  
+
+A ideia é que, em situações onde há muitas pautas cadastradas, o cache evite consultas repetidas ao banco de dados, entregando resultados de forma mais rápida e eficiente.  
+
+Sempre que um novo tópico é criado ou deletado, o cache é automaticamente atualizado, garantindo consistência entre os dados armazenados e os retornados pela API.
+
 ## 🔒 Políticas e Regras de Negócio
 - Cada associado pode **votar apenas uma vez por pauta**.  
 - Uma sessão só pode ser aberta se a pauta não possuir outra sessão ativa.  
 - Ao encerrar, a sessão muda status para **USED** e não pode ser reaberta.  
 - Resultados contabilizam todos os votos válidos (`YES` / `NO`).
-
+- O **CPF** informado passa por verificação de validade antes de registrar o voto.
+- Ao votar, pode haver retorno aleatório de erro: **`UNABLE_TO_VOTE`**.
+  
 ---
 
 ## ▶️ Como Executar o Projeto (Local/Container/Cloud)
@@ -198,18 +231,17 @@ cd desafio-votacao/sicredi
 mvn spring-boot:run
 ```
 
-### Com Docker/Podman
+### 🐳 Com Docker/Podman
 ```
 git clone https://github.com/Gilberto491/DesafioVotacao.git
 cd desafio-votacao/sicredi
-podman-compose up -d
+docker-compose up -d
 ```
 
 ## 🚀 Futuras Melhorias
 - Autenticação com **JWT** para segurança
 - Pipeline CI/CD completo com deploy automatizado
-- Dashboard customizado no Grafana para KPIs de negócio
-- Mais cenários de testes de carga (stress e soak tests)
+- Integração com **SonarQube/SonarCloud**: análise estática e cobertura
   
 ---
 
