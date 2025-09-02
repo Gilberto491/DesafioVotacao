@@ -243,6 +243,19 @@ Este projeto segue um fluxo baseado no **Git Flow** simplificado:
 
 🔖 As versões estáveis são marcadas com **tags** (ex.: `v0.1.0`, `v0.1.1`, `v1.0.0`) e utilizadas para gerar **releases** no GitHub.
 
+## 📊 Observabilidade
+
+Foi configurada uma stack de monitoramento com **Prometheus + Grafana**.
+
+- Mais de **10 métricas essenciais da aplicação Java** foram expostas:
+  - JVM (memória, GC, threads, uptime)
+  - Requisições HTTP (latência, throughput, erros)
+
+🔗 Acesse o Grafana em:  
+http://34.59.158.212:3000/dashboards  
+
+> **Credenciais padrão**: `admin / admin`
+
 ---
 
 ## ▶️ Como Executar o Projeto (Local/Container/Cloud)
