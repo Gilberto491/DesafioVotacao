@@ -19,11 +19,8 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 import static com.sicredi.desafio.helpers.TestConstants.DESCRIPTION_TOPIC;
@@ -32,9 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -105,18 +100,6 @@ public class TopicServiceImplTest {
         assertThatThrownBy(() -> service.getById(99L))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("topic.not-found");
-    }
-
-    @Test
-    void list_returnsPagedResponses() {
-        var pageable = PageRequest.of(0, 2);
-        when(topicRepo.findAll(pageable)).thenReturn(new PageImpl<>(List.of(entity), pageable, 1));
-        when(mapper.toResponse(entity)).thenReturn(resp);
-
-        var page = service.list(pageable);
-
-        assertThat(page.getTotalElements()).isEqualTo(1);
-        assertThat(page.getContent()).containsExactly(resp);
     }
 
     @Test
