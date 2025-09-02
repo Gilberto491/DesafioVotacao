@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.sicredi.desafio</groupId>
 	<artifactId>desafio-votacao</artifactId>
-	<version>0.1.0</version>
+	<version>1.0.0</version>
 	<name>sicredi</name>
 	<description>sicredi</description>
 	<url/>
